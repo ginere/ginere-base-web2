@@ -4,8 +4,9 @@ import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import spoonapps.util.exception.ApplicationException;
 import spoonapps.util.notification.Notify;
 import spoonapps.web.json.ObjectMapperProvider;
 
@@ -36,6 +37,6 @@ public abstract class JsonResultServlet extends JSONServlet{
 
 	 
 	protected abstract Object getData(HttpServletRequest request,
-			HttpServletResponse response) throws Throwable;
+			HttpServletResponse response) throws ApplicationException;
 
 }

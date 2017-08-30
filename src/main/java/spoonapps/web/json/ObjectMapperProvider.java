@@ -2,17 +2,9 @@ package spoonapps.web.json;
 
 import java.util.Date;
 
-import org.codehaus.jackson.Version;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.fasterxml.jackson.databind.module.SimpleModule;
-
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.module.SimpleModule;
-import org.codehaus.jackson.map.ser.std.DateSerializer;
-
-import spoonapps.token.listener.AbstractContextListener;
 import spoonapps.util.enumeration.AppEnum;
 
 /**
@@ -23,26 +15,29 @@ public class ObjectMapperProvider {
 
 	private static  ObjectMapper mapper;
 
-//	public ObjectMapperProvider() {
-//		mapper = createDefaultMapper();
-//	}
-//
-//	public ObjectMapper getContext() {
-//		return mapper;
-//	}
+	/**
+	 * <p>Constructor for ObjectMapperProvider.</p>
+	 */
+	public ObjectMapperProvider() {
+		mapper = createDefaultMapper();
+	}
 
 	public static ObjectMapper createDefaultMapper() {
 		if (mapper==null){
 			final ObjectMapper result = new ObjectMapper();
 	
-	//		// Create the module
-			SimpleModule mod = new SimpleModule("Trilogue", new Version(0, 0, 0, AbstractContextListener.getVersion()));
-	
+			// Create the module
+//			SimpleModule mod = new SimpleModule(AbstractContextListener.getModuleName(),
+//												new Version(0, 0, 0, AbstractContextListener.getVersion()));
+			
+			SimpleModule mod = new SimpleModule("SimpleModule");
+
+			
 			// Add the custom serializer to the module
 			mod.addSerializer(AppEnum.class,new AppEnumSerializer());
 			mod.addSerializer(Date.class,new DateSerializer());
-	
-			result.enable(SerializationConfig.Feature.INDENT_OUTPUT);
+			
+//			result.enable(SerializationConfig.Feature.INDENT_OUTPUT);
 			
 			result.registerModule(mod);
 			
@@ -52,6 +47,4 @@ public class ObjectMapperProvider {
 		
 		return mapper;
 	}
-
-	// ...
 }

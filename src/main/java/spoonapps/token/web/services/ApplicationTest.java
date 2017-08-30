@@ -9,14 +9,14 @@ import spoonapps.token.listener.AbstractContextListener;
 import spoonapps.util.exception.ApplicationException;
 import spoonapps.web.servlet.JsonResultServlet;
 
-@WebServlet("/admin/version")
-public class ApplicationVersion extends JsonResultServlet {
+@WebServlet("/admin/test")
+public class ApplicationTest extends JsonResultServlet {
 
 	private static final long serialVersionUID = "$Header$".hashCode();
 
 	@Override
 	protected Object getData(HttpServletRequest request, HttpServletResponse response) {
-		return AbstractContextListener.getVersion();
+		return AbstractContextListener.check();
 	}
 
 	protected long getLastModifiedException(HttpServletRequest req) throws ServletException, ApplicationException {

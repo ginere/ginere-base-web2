@@ -2,33 +2,28 @@ package spoonapps.web.json;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.SerializerProvider;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 
 import spoonapps.util.enumeration.AppEnum;
 
 public class AppEnumSerializer extends JsonSerializer<AppEnum> {
 
-//    public AppEnumSerializer() {
-//        this(null);
-//    }
-//    
-//	public AppEnumSerializer(Class<AppEnum> t) {
-//		super(t);
-//	}
-
-//	@Override
-//	public void serialize(AppEnum obj, JsonGenerator jgen, SerializerProvider sp)
-//			throws IOException, JsonGenerationException {
-//		
-//		jgen.writeString(obj.getId());
-//	}
+	protected AppEnumSerializer() {
+	}
 
 	@Override
-	public void serialize(AppEnum obj, org.codehaus.jackson.JsonGenerator jgen, SerializerProvider provider)
-			throws IOException, JsonProcessingException {
-		jgen.writeString(obj.getId());
+	public void serialize(AppEnum obj,
+						  JsonGenerator jgen,
+						  SerializerProvider provider) throws IOException, JsonProcessingException {
+
+		if (obj==null){
+			jgen.writeObject(null);
+		} else {
+			jgen.writeString(obj.getId());
+		}
 		
 	}
 

@@ -10,4 +10,5 @@ Changes:
 2. Move from Gson to jackson
 3. Added a default json format.
 4. Simplifications.
-
+5. Java 8
+Inspired from trlg.

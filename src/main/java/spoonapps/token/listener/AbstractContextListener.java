@@ -4,14 +4,14 @@ package spoonapps.token.listener;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import spoonapps.util.exception.ApplicationException;
 import spoonapps.util.notification.Notify;
 import spoonapps.util.properties.GlobalProperties;
 import spoonapps.util.runtimechecks.RuntimeCheckResult;
-import spoonapps.web.json.ObjectMapperProvider;
+import spoonapps.util.version.VersionUtils;
 
 
 public abstract class AbstractContextListener implements ServletContextListener{
@@ -34,9 +34,7 @@ public abstract class AbstractContextListener implements ServletContextListener{
 		CONTEXT = null;
 	}
 
-
-
-	abstract protected void initializeContext(ServletContextEvent sce);
+	abstract protected void initializeContext(ServletContextEvent sce,String appName) throws ApplicationException;
 
 	
 	/**
@@ -54,7 +52,7 @@ public abstract class AbstractContextListener implements ServletContextListener{
 
 		try {
 
-            initializeContext(sce);
+            initializeContext(sce,appName);
 
 			log.info("Runtime tests started ...");
 			RuntimeCheckResult result = check();
@@ -84,6 +82,12 @@ public abstract class AbstractContextListener implements ServletContextListener{
 		
 	}
 
+
+	protected static String getSvnHeader() {
+		return SVN_HEADER_STRING;
+	}
+
+	
 	/**
 	 * Gets the application version from the SVN position.
 	 * 
@@ -91,20 +95,9 @@ public abstract class AbstractContextListener implements ServletContextListener{
 	 */
 	public static String getVersion() {
 		if (version == null) {
-			if (SVN_HEADER_STRING.contains("trunk")) {
-				version = "t-1.0.0";
-			} else if (SVN_HEADER_STRING.contains("tags")) {
-				int index = SVN_HEADER_STRING.lastIndexOf("tags");
-				String tmp = SVN_HEADER_STRING.substring(index + "tags".length(), SVN_HEADER_STRING.length());
-				String array[] = StringUtils.split(tmp, '/');
-				if (array.length > 0) {
-					version = array[0];
-				} else {
-					version = "unkownw-tag";
-				}
-			} else {
-				version = "unkownw";
-			}
+			String svnHeaderString=getSvnHeader();
+			
+			version=VersionUtils.getVersion(svnHeaderString,"trunk");
 		}
 
 		return version;
@@ -114,7 +107,9 @@ public abstract class AbstractContextListener implements ServletContextListener{
 		RuntimeCheckResult ret = new RuntimeCheckResult(AbstractContextListener.class,getVersion());
 		if (CONTEXT == null) {
 			ret.addError("The application is not initialized.");
-		} else {
+		} else {			
+			ret.add(Notify.check());
+			ret.add(GlobalProperties.check());						
 			ret.add(CONTEXT.innerRuntimeCheck());
 		}
 		return ret;
