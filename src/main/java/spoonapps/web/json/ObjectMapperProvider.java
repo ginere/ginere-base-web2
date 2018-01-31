@@ -26,10 +26,6 @@ public class ObjectMapperProvider {
 		if (mapper==null){
 			final ObjectMapper result = new ObjectMapper();
 	
-			// Create the module
-//			SimpleModule mod = new SimpleModule(AbstractContextListener.getModuleName(),
-//												new Version(0, 0, 0, AbstractContextListener.getVersion()));
-			
 			SimpleModule mod = new SimpleModule("SimpleModule");
 
 			
@@ -37,7 +33,8 @@ public class ObjectMapperProvider {
 			mod.addSerializer(AppEnum.class,new AppEnumSerializer());
 			mod.addSerializer(Date.class,new DateSerializer());
 			
-//			result.enable(SerializationConfig.Feature.INDENT_OUTPUT);
+			// Needs to add the rea class
+			// mod.addDeserializer(AppEnum.class, new AppEnumDeserializer(AppEnum.class));
 			
 			result.registerModule(mod);
 			

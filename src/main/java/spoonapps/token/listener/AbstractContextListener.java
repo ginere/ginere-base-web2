@@ -7,6 +7,7 @@ import javax.servlet.ServletContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import spoonapps.util.config.FileConfig;
 import spoonapps.util.exception.ApplicationException;
 import spoonapps.util.notification.Notify;
 import spoonapps.util.properties.GlobalProperties;
@@ -19,8 +20,10 @@ public abstract class AbstractContextListener implements ServletContextListener{
 	private static Logger log = LoggerFactory.getLogger(AbstractContextListener.class);
 
 	private static final String SVN_HEADER_STRING = "$Header$";
+	private static final String SVN_DATE_STRING = "$Date$";
 
 	private static String version;
+	private static String versionDate;
 
 	private static AbstractContextListener CONTEXT = null;
 
@@ -51,7 +54,9 @@ public abstract class AbstractContextListener implements ServletContextListener{
 		log.warn("--------------------------------------------------------------------------------------");			
 
 		try {
-
+			// this is conmarly CATALINA_HOME/conf
+			FileConfig.SINGLETON.addPath("./conf");
+			
             initializeContext(sce,appName);
 
 			log.info("Runtime tests started ...");
@@ -77,16 +82,8 @@ public abstract class AbstractContextListener implements ServletContextListener{
 			log.error("Context initialization finished on ERROR:" + appName+" VERSION:"+getVersion(),e);		
 			log.error("--------------------------------------------------------------------------------------");			
 			Notify.error("Context initialization finished on ERROR:" + appName+" VERSION:"+getVersion(),e);		
-		}
-
-		
+		}		
 	}
-
-
-	protected static String getSvnHeader() {
-		return SVN_HEADER_STRING;
-	}
-
 	
 	/**
 	 * Gets the application version from the SVN position.
@@ -95,14 +92,27 @@ public abstract class AbstractContextListener implements ServletContextListener{
 	 */
 	public static String getVersion() {
 		if (version == null) {
-			String svnHeaderString=getSvnHeader();
-			
-			version=VersionUtils.getVersion(svnHeaderString,"trunk");
+			version=VersionUtils.getVersion(getSvnHeaderString(),"trunk");
 		}
 
 		return version;
 	}
 
+	protected static String getSvnHeaderString() {
+		return SVN_HEADER_STRING;
+	}
+
+	protected static String getSvnDateString() {
+		return SVN_DATE_STRING;
+	}
+
+	public static String getVersionDate() {
+		if (versionDate == null) {
+			versionDate=VersionUtils.getDate(getSvnDateString());
+		}
+
+		return versionDate;
+	}
 	public static RuntimeCheckResult check() {
 		RuntimeCheckResult ret = new RuntimeCheckResult(AbstractContextListener.class,getVersion());
 		if (CONTEXT == null) {
@@ -110,12 +120,13 @@ public abstract class AbstractContextListener implements ServletContextListener{
 		} else {			
 			ret.add(Notify.check());
 			ret.add(GlobalProperties.check());						
-			ret.add(CONTEXT.innerRuntimeCheck());
+//			ret.add(CONTEXT.innerRuntimeCheck(ret));
+			CONTEXT.innerRuntimeCheck(ret);
 		}
 		return ret;
 	}
 
-	protected abstract RuntimeCheckResult innerRuntimeCheck();
+	protected abstract RuntimeCheckResult innerRuntimeCheck(RuntimeCheckResult result);
 	
 
 	public static long getStartTime() {
