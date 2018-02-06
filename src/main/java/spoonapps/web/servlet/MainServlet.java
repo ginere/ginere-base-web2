@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import spoonapps.util.enumeration.AppEnum;
 import spoonapps.util.exception.ApplicationException;
 import spoonapps.util.notification.Notify;
+import spoonapps.web.servlet.info.ServletInfo;
 
 /**
  * Main classs for http services with utils to handle request, languages, users,
@@ -73,6 +74,11 @@ public abstract class MainServlet extends HttpServlet {
 
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
+
+	// This stores the servlet information
+	private final ServletInfo servletInfo=new ServletInfo(this);
+
+	
 	/**
 	 *
 	 * Returns the time the <code>HttpServletRequest</code> object was last
@@ -121,9 +127,12 @@ public abstract class MainServlet extends HttpServlet {
 		super.init(config);
 	}
 
-	public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public void service(HttpServletRequest request,
+						HttpServletResponse response) throws ServletException, IOException {
 
 		long time = System.currentTimeMillis();
+		servletInfo.startCall();
+		
 
 		String uri = getURI(request);
 		String method = getMethod(request, null);
@@ -151,25 +160,34 @@ public abstract class MainServlet extends HttpServlet {
 //				long lastModified = getLastModifiedException(request);
 				maybeSetLastModified(response);
 			}
-			if (this instanceof Jsp) {
-				Jsp jsp = (Jsp) this;
-
-				jsp._jspService(request, response);
+			if (method.equals(METHOD_OPTIONS)) {
+				// The OPtion just to spetail functions
+				doOptions(request, response);
 			} else {
-				doService(request, response);
+				if (this instanceof Jsp) {
+					Jsp jsp = (Jsp) this;
+					
+					jsp._jspService(request, response);
+				} else {
+					doService(request, response);
+				}
 			}
 		} catch (Throwable e) {
 			Notify.error("Servlet Exception" + uri, e);
 			throw new ServletException("Servlet Exception" + uri, e);
 		} finally {
-			// executionFinished(System.currentTimeMillis()-time);
-			log.info(String.format("Servlet:%s in %s ms", uri,(System.currentTimeMillis()-time)));
+			if (log.isInfoEnabled()){				
+				log.info(String.format("Servlet:%s in %s ms", uri,(System.currentTimeMillis()-time)));
+			}
+			
+			servletInfo.endCall(System.currentTimeMillis()-time);
 		}
 	}
 
 	public boolean isPost(HttpServletRequest request) {
 		return "POST".equals(request.getMethod());
 	}
+	
 	public String getMethod(HttpServletRequest request, String defaultValue) {
 		String method = request.getMethod();
 		if (StringUtils.isEmpty(method)) {
@@ -179,7 +197,8 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public Long getMandatoryLongParameter(HttpServletRequest request, String parameterName) throws ServletException {
+	public Long getMandatoryLongParameter(HttpServletRequest request,
+										  String parameterName) throws ServletException {
 		String value = getMandatoryStringParameter(request, parameterName);
 
 		try {
@@ -190,8 +209,8 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public boolean getMandatoryBooleanParameter(HttpServletRequest request, String parameterName)
-			throws ServletException {
+	public boolean getMandatoryBooleanParameter(HttpServletRequest request,
+												String parameterName) throws ServletException {
 		String value = getMandatoryStringParameter(request, parameterName);
 
 		try {
@@ -202,7 +221,8 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public int getMandatoryIntParameter(HttpServletRequest request, String parameterName) throws ServletException {
+	public int getMandatoryIntParameter(HttpServletRequest request,
+										String parameterName) throws ServletException {
 		String value = getMandatoryStringParameter(request, parameterName);
 
 		try {
@@ -213,8 +233,8 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public static String getMandatoryStringParameter(HttpServletRequest request, String parameterName)
-			throws ServletException {
+	public static String getMandatoryStringParameter(HttpServletRequest request,
+													 String parameterName) throws ServletException {
 		String value = request.getParameter(parameterName);
 		if (value == null) {
 			throw new ServletException("The mandatory parameter:'" + parameterName + "'  does not exist.");
@@ -225,7 +245,8 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public static String getStringParameter(HttpServletRequest request, String parameterName, String defaultValue) {
+	public static String getStringParameter(HttpServletRequest request,
+											String parameterName, String defaultValue) {
 		String value = request.getParameter(parameterName);
 		if (value == null) {
 			return defaultValue;
@@ -236,8 +257,10 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public String getStringParameter(HttpServletRequest request, String parameterName, String notDefinedValue,
-			String emptyDefaultValue) {
+	public String getStringParameter(HttpServletRequest request,
+									 String parameterName,
+									 String notDefinedValue,
+									 String emptyDefaultValue) {
 		String value = request.getParameter(parameterName);
 		if (value == null) {
 			return notDefinedValue;
@@ -248,7 +271,9 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public String[] getStringParameterArray(HttpServletRequest request, String parameterName, String separator) {
+	public String[] getStringParameterArray(HttpServletRequest request,
+											String parameterName,
+											String separator) {
 		String values[] = request.getParameterValues(parameterName);
 		String value = getStringParameter(request, parameterName, null);
 
@@ -264,12 +289,17 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public String[] getStringParameterArray(HttpServletRequest request, String parameterName) {
+	public String[] getStringParameterArray(HttpServletRequest request,
+											String parameterName) {
+		
 		return getStringParameterArray(request, parameterName, ",");
 	}
 
-	public double[] getDoubleParameterArray(HttpServletRequest request, String parameterName, String separator,
-			double defaultValue) {
+	public double[] getDoubleParameterArray(HttpServletRequest request,
+											String parameterName,
+											String separator,
+											double defaultValue) {
+		
 		String array[] = getStringParameterArray(request, parameterName, separator);
 		double ret[] = new double[array.length];
 
@@ -666,14 +696,16 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public static boolean containsParameter(HttpServletRequest request, String parameterName) {
+	public static boolean containsParameter(HttpServletRequest request,
+											String parameterName) {
 		String value = getStringParameter(request, parameterName, null);
 
 		return (value != null);
 	}
 
-	public static boolean containsParameter(HttpServletRequest request, Map<String, String> params,
-			String parameterName) {
+	public static boolean containsParameter(HttpServletRequest request,
+											Map<String, String> params,
+											String parameterName) {
 		if (!params.containsKey(parameterName)) {
 			return containsParameter(request, parameterName);
 		} else {
@@ -681,8 +713,10 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public static String getStringParameter(HttpServletRequest request, Map<String, String> params,
-			String parameterName, String defaultValue) {
+	public static String getStringParameter(HttpServletRequest request,
+											Map<String, String> params,
+											String parameterName,
+											String defaultValue) {
 
 		if (!params.containsKey(parameterName)) {
 			return getStringParameter(request, parameterName, defaultValue);
@@ -697,8 +731,9 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public static String getMandatoryStringParameter(HttpServletRequest request, Map<String, String> params,
-			String parameterName) throws ServletException {
+	public static String getMandatoryStringParameter(HttpServletRequest request,
+													 Map<String, String> params,
+													 String parameterName) throws ServletException {
 
 		if (!params.containsKey(parameterName)) {
 			return getMandatoryStringParameter(request, parameterName);
@@ -713,8 +748,10 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public static boolean getBooleanParameter(HttpServletRequest request, Map<String, String> params,
-			String parameterName, boolean defaultValue) {
+	public static boolean getBooleanParameter(HttpServletRequest request,
+											  Map<String, String> params,
+											  String parameterName,
+											  boolean defaultValue) {
 		String value = getStringParameter(request, params, parameterName, null);
 
 		if (value == null) {
@@ -734,8 +771,10 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public static double getDoubleParameter(HttpServletRequest request, Map<String, String> params,
-			String parameterName, Double defaultValue) {
+	public static double getDoubleParameter(HttpServletRequest request,
+											Map<String, String> params,
+											String parameterName,
+											double defaultValue) {
 		String value = getStringParameter(request, params, parameterName, null);
 
 		if (value == null) {
@@ -755,8 +794,9 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public static double getMandatoryDoubleParameter(HttpServletRequest request, Map<String, String> params,
-			String parameterName) throws ServletException {
+	public static double getMandatoryDoubleParameter(HttpServletRequest request,
+													 Map<String, String> params,
+													 String parameterName) throws ServletException {
 		String value = getStringParameter(request, params, parameterName, null);
 
 		try {
@@ -767,8 +807,9 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public AppEnum getMandatoryAppEnumParameter(HttpServletRequest request, String parameterName,
-			Class<? extends AppEnum> enumType) throws ServletException {
+	public AppEnum getMandatoryAppEnumParameter(HttpServletRequest request,
+												String parameterName,
+												Class<? extends AppEnum> enumType) throws ServletException {
 		String value = getMandatoryStringParameter(request, parameterName);
 		try {
 			AppEnum ret = AppEnum.value(enumType, value,null);
@@ -784,8 +825,10 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public AppEnum getEnumAppParameter(HttpServletRequest request, String parameterName,
-			Class<? extends AppEnum> enumType, AppEnum defaultValue) throws ServletException {
+	public AppEnum getEnumAppParameter(HttpServletRequest request,
+									   String parameterName,
+									   Class<? extends AppEnum> enumType,
+									   AppEnum defaultValue) throws ServletException {
 
 		String value = getStringParameter(request, parameterName, null);
 		if (value == null) {
