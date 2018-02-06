@@ -1,10 +1,16 @@
 package spoonapps.web.servlet.security;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import spoonapps.util.exception.ApplicationException;
 import spoonapps.util.module.AbstractModule;
 import spoonapps.util.runtimechecks.RuntimeCheckResult;
 
@@ -60,16 +66,42 @@ public class SecurityConstraintManager extends AbstractModule{
 	}
 
 	public Set<SecurityConstraintInterface> get(String[] constraints) {
-		Set<SecurityConstraintInterface> ret=new HashSet<SecurityConstraintInterface>(constraints.length);
-		for (String id:constraints){
-			SecurityConstraintInterface constraint=get(id,null);
+		if (constraints == null){
+			return Collections.emptySet();
+		} else {
+			Set<SecurityConstraintInterface> ret=new HashSet<SecurityConstraintInterface>(constraints.length);
+			for (String id:constraints){
+				SecurityConstraintInterface constraint=get(id,null);
+				
+				if (constraint!=null){
+					ret.add(constraint);
+				}
+			}
 			
-			if (constraint!=null){
-				ret.add(constraint);
+			return ret;
+		}
+	}
+
+	public boolean checkSecurityConstraints(String userId,
+										 HttpServletRequest request,
+										 HttpServletResponse response,
+										 Set<SecurityConstraintInterface> securityConstraints) throws IOException, ApplicationException {
+		
+		for (SecurityConstraintInterface constraint:securityConstraints){
+			try {
+				if (!constraint.check(userId, request,response)){
+					log.warn("Security constaint FAILS:"+constraint+" for user:"+userId);
+					return false;
+				}
+			}catch (ApplicationException e) {
+				throw new ApplicationException("While checking constraint:"+constraint+" for user:"+userId,e);
+//
+//				MainServlet.log.warn("While checking constraint:"+constraint+" for user:"+userId,e);
+//				return false;
 			}
 		}
+		return true;
 		
-		return ret;
 	}
 
 }

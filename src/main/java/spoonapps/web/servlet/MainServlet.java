@@ -128,39 +128,44 @@ public abstract class MainServlet extends HttpServlet {
 		String method = MainServletUtils.getMethod(request, null);
 
 		try {
-			// TRY THE LAST UPDATE FOR THE GET METHOD
-			if (method.equals(METHOD_GET)) {
-				long lastModified = getLastModifiedException(request);
-				if (lastModified >= 0) {
-
-					long ifModifiedSince = request.getDateHeader(HEADER_IFMODSINCE);
-
-					if (ifModifiedSince <= lastModified) {
-						// If the servlet mod time is later, call doGet()
-						// Round down to the nearest second for a proper compare
-						// A ifModifiedSince of -1 will always be less
-						maybeSetLastModified(response);
-						// Se sigue con la query normal
+			if (checkSecurityConstraints(request,response)){
+				// TRY THE LAST UPDATE FOR THE GET METHOD
+				if (method.equals(METHOD_GET)) {
+					long lastModified = getLastModifiedException(request);
+					if (lastModified >= 0) {
+	
+						long ifModifiedSince = request.getDateHeader(HEADER_IFMODSINCE);
+	
+						if (ifModifiedSince <= lastModified) {
+							// If the servlet mod time is later, call doGet()
+							// Round down to the nearest second for a proper compare
+							// A ifModifiedSince of -1 will always be less
+							maybeSetLastModified(response);
+							// Se sigue con la query normal
+						} else {
+							response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+							return;
+						}
+					}
+				} else if (method.equals(METHOD_HEAD)) {
+	//				long lastModified = getLastModifiedException(request);
+					maybeSetLastModified(response);
+				}
+				if (method.equals(METHOD_OPTIONS)) {
+					// The OPtion just to spetail functions
+					doOptions(request, response);
+				} else {
+					if (this instanceof Jsp) {
+						Jsp jsp = (Jsp) this;
+						
+						jsp._jspService(request, response);
 					} else {
-						response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-						return;
+						doService(request, response);
 					}
 				}
-			} else if (method.equals(METHOD_HEAD)) {
-//				long lastModified = getLastModifiedException(request);
-				maybeSetLastModified(response);
-			}
-			if (method.equals(METHOD_OPTIONS)) {
-				// The OPtion just to spetail functions
-				doOptions(request, response);
 			} else {
-				if (this instanceof Jsp) {
-					Jsp jsp = (Jsp) this;
-					
-					jsp._jspService(request, response);
-				} else {
-					doService(request, response);
-				}
+				// The security constraint will handle the retour code
+				return ;
 			}
 		} catch (Throwable e) {
 			Notify.error("Servlet Exception" + uri, e);
@@ -174,8 +179,12 @@ public abstract class MainServlet extends HttpServlet {
 		}
 	}
 
-	public boolean hasRights(HttpServletRequest request) {
-		return servletInfo.hasRights(MainServletUtils.getUserId(request,null),request);
+	public boolean checkSecurityConstraints(HttpServletRequest request,HttpServletResponse response) throws IOException,ApplicationException {
+		return servletInfo.checkSecurityConstraints(MainServletUtils.getUserId(request,null),request,response);
+	}
+
+	public String[] constraints() {
+		return null;
 	}
 
 }

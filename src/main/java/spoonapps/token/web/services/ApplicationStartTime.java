@@ -13,7 +13,7 @@ import spoonapps.web.servlet.JsonResultServlet;
 import spoonapps.web.servlet.security.Security;
 import spoonapps.web.servlet.security.TechnicalAdministratorSecurityConstraint;
 
-@WebServlet("/admin/starttime")
+@WebServlet(value="/admin/starttime",loadOnStartup=1)
 @Security(constraints=TechnicalAdministratorSecurityConstraint.ID)
 public class ApplicationStartTime extends JsonResultServlet {
 

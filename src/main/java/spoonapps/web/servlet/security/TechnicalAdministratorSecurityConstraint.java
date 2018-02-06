@@ -1,9 +1,13 @@
 package spoonapps.web.servlet.security;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import spoonapps.util.exception.ApplicationException;
 import spoonapps.util.runtimechecks.RuntimeCheckResult;
+import spoonapps.web.servlet.MainServletUtils;
 import spoonapps.web.servlet.role.RoleManager;
 
 /**
@@ -21,11 +25,19 @@ public class TechnicalAdministratorSecurityConstraint extends AbstractSecurityCo
 
 
 	@Override
-	public boolean check(String userId, HttpServletRequest request) {
+	public boolean check(String userId,
+						 HttpServletRequest request,
+						 HttpServletResponse response) throws IOException{
 		if (userId == null){
+			MainServletUtils.sendError(request, response, HttpServletResponse.SC_UNAUTHORIZED,"Unauthorized");
 			return false;
 		} else {
-			return RoleManager.MANAGER.hasRole(ID,userId);
+			if (RoleManager.MANAGER.hasRole(ID,userId)){
+				return true;
+			} else {
+				MainServletUtils.sendError(request, response, HttpServletResponse.SC_UNAUTHORIZED,"Unauthorized");
+				return false;
+			}
 		}
 	}
 

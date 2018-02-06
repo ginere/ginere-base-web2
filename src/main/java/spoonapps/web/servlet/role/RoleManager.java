@@ -34,7 +34,13 @@ public class RoleManager extends AbstractModule{
 	
 	public boolean hasRole(String roleId,String userId) {
 		String propertyName=roleId+"-"+userId;
-		return GlobalProperties.getBooleanValue(getClass(), propertyName, false);
+		boolean ret=GlobalProperties.getBooleanValue(getClass(), propertyName, false);
+		
+		if (log.isInfoEnabled()){
+			log.info("Has role, property not found:"+propertyName);
+		}
+		
+		return ret;
 	}
 
 }

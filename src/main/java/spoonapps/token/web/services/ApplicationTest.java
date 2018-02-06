@@ -11,7 +11,7 @@ import spoonapps.web.servlet.JsonResultServlet;
 import spoonapps.web.servlet.security.Security;
 import spoonapps.web.servlet.security.TechnicalAdministratorSecurityConstraint;
 
-@WebServlet("/admin/test")
+@WebServlet(value="/admin/test",loadOnStartup=1)
 @Security(constraints=TechnicalAdministratorSecurityConstraint.ID)
 public class ApplicationTest extends JsonResultServlet {
 

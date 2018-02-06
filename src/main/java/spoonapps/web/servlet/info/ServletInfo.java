@@ -1,9 +1,11 @@
 package spoonapps.web.servlet.info;
 
+import java.io.IOException;
 import java.util.Set;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,9 +25,11 @@ public class ServletInfo extends TimeInformation{
 	private final String url;
 
 	private long runningCall=0;
+	private long constraintFails=0;
 	
 
 	private final Set<SecurityConstraintInterface> securityConstraints;
+
 
 	public ServletInfo(MainServlet servlet){
 		Class<? extends MainServlet> clazz=servlet.getClass();
@@ -57,28 +61,8 @@ public class ServletInfo extends TimeInformation{
 		if (sec != null){
 			this.securityConstraints=SecurityConstraintManager.MANAGER.get(sec.constraints());
 		} else {
-			this.securityConstraints=SecurityConstraintManager.MANAGER.get(sec.constraints());		
+			this.securityConstraints=SecurityConstraintManager.MANAGER.get(servlet.constraints());		
 		}
-//		try {
-//			RightInterface[] rights=servlet.getRights();
-//	
-//			if (rights == null){
-//				this.rightDescription="Public access";
-//			} else if (rights.length == 0){
-//				this.rightDescription="User logged";
-//			} else {
-//				this.rightDescription=null;
-//				for (RightInterface right:rights){
-//					if (this.rightDescription == null){
-//						this.rightDescription=right.getName();
-//					} else {
-//						this.rightDescription+=","+right.getName();
-//					}
-//				}
-//			}
-//		}catch(ContextInitializedException e){
-//			log.error("",e);
-//		}
 		
 		ServletInfoContainer.SINGLETON.subscrive(servlet, this);
 	}
@@ -92,10 +76,15 @@ public class ServletInfo extends TimeInformation{
 		super.add(time);
 	}
 	
-	public void clean(){
+	public synchronized void clean(){
 		super.clean();
+		constraintFails=0;
 	}
 
+	private synchronized void addConstrintFails() {
+		constraintFails++;		
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -112,17 +101,24 @@ public class ServletInfo extends TimeInformation{
 		return runningCall;
 	}
 
-	public boolean hasRights(String userId, HttpServletRequest request) {
-		for (SecurityConstraintInterface constraint:securityConstraints){
-			try {
-				if (constraint.check(userId, request)){
-					return true;
-				}
-			}catch (ApplicationException e) {
-				MainServlet.log.warn("While checking constraint:"+constraint+" for user:"+userId,e);
-			}
+	public long getConstraintFails() {
+		return constraintFails;
+	}
+	
+	public Set<SecurityConstraintInterface> getSecurityConstraints() {
+		return securityConstraints;
+	}
+
+	public boolean checkSecurityConstraints(String userId, 
+										    HttpServletRequest request,
+										    HttpServletResponse response) throws IOException,ApplicationException {
+		if (SecurityConstraintManager.MANAGER.checkSecurityConstraints(userId,request,response,securityConstraints)){
+			return true;
+		} else {
+			addConstrintFails();
+			return false;
 		}
-		return false;
 		
 	}
+
 }

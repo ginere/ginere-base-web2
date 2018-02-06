@@ -1,6 +1,9 @@
 package spoonapps.web.servlet.security;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import spoonapps.util.exception.ApplicationException;
 import spoonapps.util.runtimechecks.RuntimeCheckResult;
@@ -20,6 +23,8 @@ public abstract class AbstractSecurityConstraint implements SecurityConstraintIn
 		this.id=id;
 		this.name=name;
 		this.description=description;		
+		
+		SecurityConstraintManager.MANAGER.subscrive(this);
 	}
 	
 	@Override
@@ -38,7 +43,9 @@ public abstract class AbstractSecurityConstraint implements SecurityConstraintIn
 	}
 
 	@Override
-	public abstract boolean check(String userId, HttpServletRequest request) throws ApplicationException;
+	public abstract boolean check(String userId,
+								  HttpServletRequest request,
+								  HttpServletResponse response) throws IOException,ApplicationException;
 
 	public abstract void check(RuntimeCheckResult ret) throws ApplicationException;
 

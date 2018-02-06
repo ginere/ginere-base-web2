@@ -14,7 +14,10 @@ import spoonapps.util.properties.GlobalProperties;
 import spoonapps.util.runtimechecks.RuntimeCheckResult;
 import spoonapps.util.version.VersionUtils;
 import spoonapps.web.servlet.info.ServletInfoContainer;
+import spoonapps.web.servlet.security.SecurityConstraintInterface;
 import spoonapps.web.servlet.security.SecurityConstraintManager;
+import spoonapps.web.servlet.security.TechnicalAdministratorSecurityConstraint;
+import spoonapps.web.servlet.security.UserLoggedSecurityConstraint;
 
 
 public abstract class AbstractContextListener implements ServletContextListener{
@@ -59,6 +62,12 @@ public abstract class AbstractContextListener implements ServletContextListener{
 			// this is conmarly CATALINA_HOME/conf
 			FileConfig.SINGLETON.addPath("./conf");
 			
+			// Initializing the security constraints
+			SecurityConstraintInterface sec;
+			sec=TechnicalAdministratorSecurityConstraint.CONSTRAINT;
+			sec=UserLoggedSecurityConstraint.CONSTRAINT;
+			
+
             initializeContext(sce,appName);
 
 			log.info("Runtime tests started ...");
