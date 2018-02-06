@@ -13,6 +13,8 @@ import spoonapps.util.notification.Notify;
 import spoonapps.util.properties.GlobalProperties;
 import spoonapps.util.runtimechecks.RuntimeCheckResult;
 import spoonapps.util.version.VersionUtils;
+import spoonapps.web.servlet.info.ServletInfoContainer;
+import spoonapps.web.servlet.security.SecurityConstraintManager;
 
 
 public abstract class AbstractContextListener implements ServletContextListener{
@@ -121,6 +123,10 @@ public abstract class AbstractContextListener implements ServletContextListener{
 			ret.add(Notify.check());
 			ret.add(GlobalProperties.check());						
 //			ret.add(CONTEXT.innerRuntimeCheck(ret));
+			
+			ret.add("SecurityConstraintManager", SecurityConstraintManager.MANAGER);
+			ret.add("ServletInfoContainer", ServletInfoContainer.SINGLETON);
+			
 			CONTEXT.innerRuntimeCheck(ret);
 		}
 		return ret;

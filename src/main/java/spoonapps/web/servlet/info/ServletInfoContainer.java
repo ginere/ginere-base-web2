@@ -15,6 +15,16 @@ public class ServletInfoContainer extends AbstractModule{
 	
 	private ServletInfoContainer(){		
 	}
+		
+	@Override
+	protected RuntimeCheckResult check(RuntimeCheckResult ret) {
+		return ret;
+	}
+
+	@Override
+	protected String getSvnHeaderString() {
+		return "$Header:$";
+	}
 	
 	public void subscrive(MainServlet servlet,ServletInfo info){
 		cache.put(servlet.getClass().getName(),info);
@@ -38,15 +48,6 @@ public class ServletInfoContainer extends AbstractModule{
 	public Collection<ServletInfo> information(){
 		return cache.values();		
 	}
-	
-	@Override
-	protected RuntimeCheckResult check(RuntimeCheckResult ret) {
-		return ret;
-	}
 
-	@Override
-	protected String getSvnHeaderString() {
-		return "$Header:$";
-	}
     	
 }

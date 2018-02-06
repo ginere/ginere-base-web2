@@ -1,18 +1,18 @@
 package spoonapps.token.web.services.admin;
 
-import java.util.Date;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import spoonapps.token.listener.AbstractContextListener;
 import spoonapps.util.exception.ApplicationException;
 import spoonapps.web.servlet.JsonResultServlet;
 import spoonapps.web.servlet.info.ServletInfoContainer;
+import spoonapps.web.servlet.security.Security;
+import spoonapps.web.servlet.security.TechnicalAdministratorSecurityConstraint;
 
 @WebServlet(value="/admin/servletinfo",description="This returns the list of the servlet information")
+@Security(constraints=TechnicalAdministratorSecurityConstraint.ID)
 public class ServletInformation extends JsonResultServlet {
 
 	private static final long serialVersionUID = "$Header$".hashCode();
@@ -27,11 +27,11 @@ public class ServletInformation extends JsonResultServlet {
 	}
 	
 	
-	Definir los roloes y usuarios 
-	
-	En el web.xml se pueden definir los roloes y leerlos del tomcat users
-	
-	En video utilizamos el Global properties para almacenar los roles ...
-	
-	Escojer ....
+//	Definir los roloes y usuarios 
+//	
+//	En el web.xml se pueden definir los roloes y leerlos del tomcat users
+//	
+//	En video utilizamos el Global properties para almacenar los roles ...
+//	
+//	Escojer ....
 }

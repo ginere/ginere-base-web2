@@ -30,7 +30,7 @@ public abstract class JsonResultServlet extends JSONServlet{
 			
 			return Result.success(data);
 		} catch (Throwable e) {
-			Notify.error(getURI(request), e);
+			Notify.error(MainServletUtils.getURI(request), e);
 			return Result.exception(e);
 		}
 	}

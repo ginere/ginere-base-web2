@@ -10,8 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 import spoonapps.token.listener.AbstractContextListener;
 import spoonapps.util.exception.ApplicationException;
 import spoonapps.web.servlet.JsonResultServlet;
+import spoonapps.web.servlet.security.Security;
+import spoonapps.web.servlet.security.TechnicalAdministratorSecurityConstraint;
 
 @WebServlet("/admin/starttime")
+@Security(constraints=TechnicalAdministratorSecurityConstraint.ID)
 public class ApplicationStartTime extends JsonResultServlet {
 
 	private static final long serialVersionUID = "$Header$".hashCode();

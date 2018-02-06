@@ -1,11 +1,18 @@
 package spoonapps.web.servlet.info;
 
+import java.util.Set;
+
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
+import spoonapps.util.exception.ApplicationException;
 import spoonapps.util.stats.TimeInformation;
 import spoonapps.web.servlet.MainServlet;
+import spoonapps.web.servlet.security.Security;
+import spoonapps.web.servlet.security.SecurityConstraintInterface;
+import spoonapps.web.servlet.security.SecurityConstraintManager;
 
 public class ServletInfo extends TimeInformation{
     	
@@ -17,6 +24,8 @@ public class ServletInfo extends TimeInformation{
 
 	private long runningCall=0;
 	
+
+	private final Set<SecurityConstraintInterface> securityConstraints;
 
 	public ServletInfo(MainServlet servlet){
 		Class<? extends MainServlet> clazz=servlet.getClass();
@@ -44,6 +53,12 @@ public class ServletInfo extends TimeInformation{
 			this.name=clazz.getSimpleName();
 		}	
 
+		Security sec=(Security)clazz.getAnnotation(Security.class);
+		if (sec != null){
+			this.securityConstraints=SecurityConstraintManager.MANAGER.get(sec.constraints());
+		} else {
+			this.securityConstraints=SecurityConstraintManager.MANAGER.get(sec.constraints());		
+		}
 //		try {
 //			RightInterface[] rights=servlet.getRights();
 //	
@@ -95,5 +110,19 @@ public class ServletInfo extends TimeInformation{
 
 	public long getRunningCall() {
 		return runningCall;
+	}
+
+	public boolean hasRights(String userId, HttpServletRequest request) {
+		for (SecurityConstraintInterface constraint:securityConstraints){
+			try {
+				if (constraint.check(userId, request)){
+					return true;
+				}
+			}catch (ApplicationException e) {
+				MainServlet.log.warn("While checking constraint:"+constraint+" for user:"+userId,e);
+			}
+		}
+		return false;
+		
 	}
 }
