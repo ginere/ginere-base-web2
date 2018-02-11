@@ -1,6 +1,7 @@
 package spoonapps.web.servlet;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,6 +38,6 @@ public abstract class JsonPostServlet extends JSONServlet{
 
 	 
 	protected abstract Object getData(HttpServletRequest request,
-			HttpServletResponse response) throws ApplicationException;
+			HttpServletResponse response) throws ApplicationException, ServletException;
 
 }
