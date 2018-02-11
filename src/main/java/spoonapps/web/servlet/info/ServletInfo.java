@@ -38,12 +38,17 @@ public class ServletInfo extends TimeInformation{
 
 		WebServlet ws=(WebServlet)clazz.getAnnotation(WebServlet.class);
 		if (ws != null){
-			String description="";
-			description+="Name: "+ws.name();
-			description+="Displayname: "+ws.displayName();
-			description+="Description: "+ws.description();
-			description+="AsyncSupported: "+ws.asyncSupported();
-
+			
+			String description=ws.description();
+			
+			if (StringUtils.isBlank(description)){
+				description="";
+				description+="Name: "+ws.name();
+				description+="Displayname: "+ws.displayName();
+				description+="Description: "+ws.description();
+				description+="AsyncSupported: "+ws.asyncSupported();
+			}
+			
 			this.description=description;
 			this.url=StringUtils.join(ws.value());
 			
