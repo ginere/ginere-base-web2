@@ -49,12 +49,10 @@ public abstract class JSONServlet extends MainServlet {
 
 		//		ServletOutputStream output = response.getOutputStream();
 		PrintWriter writer = response.getWriter();
-		mapper.writeValue(writer, obj);
-
-
-		//				output.write(jsonString.getBytes(CHARSET));
-		//				output.flush();
-		//				output.close();
+		if (obj!=null){
+			// If no object to write this writes nothing ...
+			mapper.writeValue(writer, obj);
+		}
 
 		writer.flush();
 		writer.close();
