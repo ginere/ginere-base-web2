@@ -5,6 +5,9 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import spoonapps.util.exception.ApplicationException;
 import spoonapps.util.runtimechecks.RuntimeCheckResult;
 
@@ -13,6 +16,9 @@ import spoonapps.util.runtimechecks.RuntimeCheckResult;
  */
 public abstract class AbstractSecurityConstraint implements SecurityConstraintInterface{
 
+	protected static Logger log = LoggerFactory.getLogger(AbstractSecurityConstraint.class);
+
+	
 	protected final String id;
 	protected final String name;
 	protected final String description;
