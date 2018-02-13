@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import spoonapps.util.exception.ApplicationException;
 import spoonapps.util.runtimechecks.RuntimeCheckResult;
-import spoonapps.web.servlet.MainServlet;
 import spoonapps.web.servlet.MainServletUtils;
 import spoonapps.web.servlet.role.RoleManager;
 
@@ -30,7 +29,6 @@ public class UserLoggedSecurityConstraint extends AbstractSecurityConstraint{
 						 HttpServletRequest request,
 						 HttpServletResponse response) throws IOException {
 		if (userId == null){
-			MainServletUtils.sendError(request, response, HttpServletResponse.SC_UNAUTHORIZED,"Unauthorized");
 			return false;
 		} else {
 			return true;
@@ -41,5 +39,10 @@ public class UserLoggedSecurityConstraint extends AbstractSecurityConstraint{
 	@Override
 	public void check(RuntimeCheckResult ret) throws ApplicationException {
 		ret.add("RoleManager", RoleManager.MANAGER);		
-	}		
+	}	
+	
+	@Override
+	public void getDefaultReturn(String userId,HttpServletRequest request, HttpServletResponse response) throws IOException {
+		MainServletUtils.sendError(request, response, HttpServletResponse.SC_UNAUTHORIZED,"Unauthorized");		
+	}
 }

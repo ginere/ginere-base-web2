@@ -24,4 +24,7 @@ public interface SecurityConstraintInterface extends RuntimeCheckInterface{
 						 HttpServletRequest request,
 						 HttpServletResponse response) throws IOException,ApplicationException;	
 	
+	public void getDefaultReturn(String userId,HttpServletRequest request,
+			 					 HttpServletResponse response)throws IOException,ApplicationException;
+	
 }

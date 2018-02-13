@@ -1,4 +1,4 @@
-package spoonapps.token.web.services;
+package spoonapps.token.web.services.admin;
 
 import java.util.Date;
 
@@ -13,7 +13,7 @@ import spoonapps.web.servlet.JsonResultServlet;
 import spoonapps.web.servlet.security.Security;
 import spoonapps.web.servlet.security.TechnicalAdministratorSecurityConstraint;
 
-@WebServlet(value="/admin/starttime",loadOnStartup=1)
+@WebServlet(value="/services/admin/starttime",loadOnStartup=1)
 @Security(constraints=TechnicalAdministratorSecurityConstraint.ID)
 public class ApplicationStartTime extends JsonResultServlet {
 

@@ -82,7 +82,7 @@ public class SecurityConstraintManager extends AbstractModule{
 		}
 	}
 
-	public boolean checkSecurityConstraints(String userId,
+	public SecurityConstraintInterface checkSecurityConstraints(String userId,
 										 HttpServletRequest request,
 										 HttpServletResponse response,
 										 Set<SecurityConstraintInterface> securityConstraints) throws IOException, ApplicationException {
@@ -91,16 +91,13 @@ public class SecurityConstraintManager extends AbstractModule{
 			try {
 				if (!constraint.check(userId, request,response)){
 					log.warn("Security constaint FAILS:"+constraint+" for user:"+userId);
-					return false;
+					return constraint;
 				}
 			}catch (ApplicationException e) {
 				throw new ApplicationException("While checking constraint:"+constraint+" for user:"+userId,e);
-//
-//				MainServlet.log.warn("While checking constraint:"+constraint+" for user:"+userId,e);
-//				return false;
 			}
 		}
-		return true;
+		return null;
 		
 	}
 

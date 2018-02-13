@@ -1,4 +1,4 @@
-package spoonapps.token.web.services;
+package spoonapps.token.web.services.admin;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,7 +11,7 @@ import spoonapps.web.servlet.JsonResultServlet;
 import spoonapps.web.servlet.security.Security;
 import spoonapps.web.servlet.security.TechnicalAdministratorSecurityConstraint;
 
-@WebServlet(value="/admin/version",loadOnStartup=1)
+@WebServlet(value="/services/admin/version",loadOnStartup=1)
 @Security(constraints=TechnicalAdministratorSecurityConstraint.ID)
 public class ApplicationVersion extends JsonResultServlet {
 

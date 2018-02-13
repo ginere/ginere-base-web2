@@ -29,13 +29,11 @@ public class TechnicalAdministratorSecurityConstraint extends AbstractSecurityCo
 						 HttpServletRequest request,
 						 HttpServletResponse response) throws IOException{
 		if (userId == null){
-			MainServletUtils.sendError(request, response, HttpServletResponse.SC_UNAUTHORIZED,"Unauthorized");
 			return false;
 		} else {
 			if (RoleManager.MANAGER.hasRole(ID,userId)){
 				return true;
 			} else {
-				MainServletUtils.sendError(request, response, HttpServletResponse.SC_UNAUTHORIZED,"Unauthorized");
 				return false;
 			}
 		}
@@ -45,5 +43,11 @@ public class TechnicalAdministratorSecurityConstraint extends AbstractSecurityCo
 	@Override
 	public void check(RuntimeCheckResult ret) throws ApplicationException {
 		ret.add("RoleManager", RoleManager.MANAGER);		
+	}
+
+
+	@Override
+	public void getDefaultReturn(String userId,HttpServletRequest request, HttpServletResponse response) throws IOException {
+		MainServletUtils.sendError(request, response, HttpServletResponse.SC_UNAUTHORIZED,"Unauthorized");		
 	}		
 }

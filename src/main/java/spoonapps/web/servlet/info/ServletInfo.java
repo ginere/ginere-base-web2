@@ -86,7 +86,7 @@ public class ServletInfo extends TimeInformation{
 		constraintFails=0;
 	}
 
-	private synchronized void addConstrintFails() {
+	private synchronized void addConstrintFails(SecurityConstraintInterface checkSecurityConstraints) {
 		constraintFails++;		
 	}
 	
@@ -114,14 +114,16 @@ public class ServletInfo extends TimeInformation{
 		return securityConstraints;
 	}
 
-	public boolean checkSecurityConstraints(String userId, 
+	public SecurityConstraintInterface checkSecurityConstraints(String userId, 
 										    HttpServletRequest request,
 										    HttpServletResponse response) throws IOException,ApplicationException {
-		if (SecurityConstraintManager.MANAGER.checkSecurityConstraints(userId,request,response,securityConstraints)){
-			return true;
+		
+		SecurityConstraintInterface checkSecurityConstraints = SecurityConstraintManager.MANAGER.checkSecurityConstraints(userId,request,response,securityConstraints);
+		if (checkSecurityConstraints == null){
+			return null;
 		} else {
-			addConstrintFails();
-			return false;
+			addConstrintFails(checkSecurityConstraints);
+			return checkSecurityConstraints;
 		}
 		
 	}

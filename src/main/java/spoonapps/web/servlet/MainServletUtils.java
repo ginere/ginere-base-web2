@@ -701,4 +701,20 @@ public class MainServletUtils {
 			}
 		}
 	}
+
+	public static String getRequestShortInfo(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session == null){
+			return "NO_SESSION:"+getRemoteAddress(request, "NO_REMOTE_ADDRESS")+getUserAgent(request, "NO_USER_AGENT");
+		} else {
+			String value = getSessionStringValue(request, "ID", null);
+			
+			if (value == null){
+				value=session.getId()+getRemoteAddress(request, "NO_REMOTE_ADDRESS")+getUserAgent(request, "NO_USER_AGENT");
+				setSessionStringValue(request, "ID", value);
+			} 
+			
+			return value;			
+		}
+	}
 }

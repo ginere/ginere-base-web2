@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import spoonapps.util.exception.ApplicationException;
 import spoonapps.util.notification.Notify;
 import spoonapps.web.servlet.info.ServletInfo;
+import spoonapps.web.servlet.security.SecurityConstraintInterface;
 
 /**
  * Main classs for http services with utils to handle request, languages, users,
@@ -180,7 +181,25 @@ public abstract class MainServlet extends HttpServlet {
 	}
 
 	public boolean checkSecurityConstraints(HttpServletRequest request,HttpServletResponse response) throws IOException,ApplicationException {
-		return servletInfo.checkSecurityConstraints(MainServletUtils.getUserId(request,null),request,response);
+		String userId=MainServletUtils.getUserId(request,null);
+		SecurityConstraintInterface securityConstraint = servletInfo.checkSecurityConstraints(userId,request,response);
+		
+		if (securityConstraint == null){
+			return true;
+		} else {
+			getReturnCode(userId,request, response,securityConstraint);
+			return false;
+		}
+	
+	}
+
+	public String getRequestShortInfo(HttpServletRequest request){
+		return MainServletUtils.getRequestShortInfo(request);
+	}
+
+	protected void getReturnCode(String userId, HttpServletRequest request, HttpServletResponse response,
+			SecurityConstraintInterface securityConstraint) throws IOException, ApplicationException {
+		securityConstraint.getDefaultReturn(userId,request, response);		
 	}
 
 	public String[] constraints() {

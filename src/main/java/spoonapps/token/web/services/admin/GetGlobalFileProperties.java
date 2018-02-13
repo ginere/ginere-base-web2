@@ -14,7 +14,7 @@ import spoonapps.web.servlet.JsonResultServlet;
 import spoonapps.web.servlet.security.Security;
 import spoonapps.web.servlet.security.TechnicalAdministratorSecurityConstraint;
 
-@WebServlet(value="/admin/file-properties",description="This returns the values of the global properties file if any",loadOnStartup=1)
+@WebServlet(value="/services/admin/file-properties",description="This returns the values of the global properties file if any",loadOnStartup=1)
 @Security(constraints=TechnicalAdministratorSecurityConstraint.ID)
 public class GetGlobalFileProperties extends JsonResultServlet {
 
@@ -25,12 +25,13 @@ public class GetGlobalFileProperties extends JsonResultServlet {
 	public GetGlobalFileProperties(){	
 	}
 		
+	protected long getLastModifiedException(HttpServletRequest req) throws ServletException, ApplicationException {
+		return GlobalProperties.getLastModified();
+	}
+
 	@Override
 	protected Object getData(HttpServletRequest request, HttpServletResponse response) throws ApplicationException {
 		return FilePropertiesEditor.SINGLETON.getProperties();
 	}
 
-	protected long getLastModifiedException(HttpServletRequest req) throws ServletException, ApplicationException {
-		return GlobalProperties.getLastModified();
-	}
 }
