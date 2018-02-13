@@ -27,8 +27,9 @@ public class Result {
 		this.result=result;
 	}
 
-	public static final Result success(Object data){
-		return new Result(data);
+	public static final Object success(Object data){
+//		return new Result(data);
+		return data;
 	}
 
 	public static final Result exception(Throwable exception){
