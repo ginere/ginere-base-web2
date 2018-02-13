@@ -22,7 +22,7 @@ import spoonapps.web.servlet.security.UserLoggedSecurityConstraint;
 
 public abstract class AbstractContextListener implements ServletContextListener{
 
-	private static Logger log = LoggerFactory.getLogger(AbstractContextListener.class);
+	protected static Logger log = LoggerFactory.getLogger(AbstractContextListener.class);
 
 	private static final String SVN_HEADER_STRING = "$Header$";
 	private static final String SVN_DATE_STRING = "$Date$";
