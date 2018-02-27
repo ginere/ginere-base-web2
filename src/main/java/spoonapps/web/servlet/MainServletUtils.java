@@ -542,12 +542,25 @@ public class MainServletUtils {
 	}
 
 	public static String getRemoteAddress(HttpServletRequest request, String defaultValue) {
-		String ret = request.getRemoteAddr();
+		
+		String val=request.getHeader("x-real-ip");
+		
+		if (StringUtils.isNotBlank(val)){
+			return val;
+		}
+		
+		val=request.getHeader("x-forwarded-for");
+		
+		if (StringUtils.isNotBlank(val)){
+			return val;
+		}
+				
+		val=request.getRemoteAddr();
 
-		if (StringUtils.isEmpty(ret)) {
+		if (StringUtils.isEmpty(val)) {
 			return defaultValue;
 		} else {
-			return ret;
+			return val;
 		}
 	}
 
