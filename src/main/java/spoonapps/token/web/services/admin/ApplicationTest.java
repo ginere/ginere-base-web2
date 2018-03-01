@@ -19,7 +19,7 @@ public class ApplicationTest extends JsonResultServlet {
 
 	@Override
 	protected Object getData(HttpServletRequest request, HttpServletResponse response) {
-		return AbstractContextListener.check();
+		return AbstractContextListener.check().toString();
 	}
 
 	protected long getLastModifiedException(HttpServletRequest req) throws ServletException, ApplicationException {
