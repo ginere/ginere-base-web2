@@ -6,20 +6,13 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.servlet.annotation.WebServlet;
-
 import spoonapps.token.listener.AbstractContextListener;
 import spoonapps.util.properties.GlobalProperties;
 import spoonapps.web.servlet.JsonResultServlet;
-import spoonapps.web.servlet.security.Security;
-import spoonapps.web.servlet.security.TechnicalAdministratorSecurityConstraint;
 
-@WebServlet(value="/services/admin/info",loadOnStartup=1)
-@Security(constraints=TechnicalAdministratorSecurityConstraint.ID)
+@SuppressWarnings("serial")
 public abstract class ApplicationInformation extends JsonResultServlet implements GlobalProperties.PropertiesChangedListener {
 
-	private static final long serialVersionUID = 1L;
-	
 	private Map<String, Object> properties=new ConcurrentHashMap<String, Object>();
 	
 	@Override
