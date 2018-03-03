@@ -11,7 +11,7 @@ import spoonapps.web.servlet.info.ServletInfoContainer;
 import spoonapps.web.servlet.security.Security;
 import spoonapps.web.servlet.security.TechnicalAdministratorSecurityConstraint;
 
-@WebServlet(value="/services/admin/servletinfo",description="This returns the list of the servlet information",loadOnStartup=1)
+@WebServlet(value="/services/admin/servlet-info",description="This returns the list of the servlet information",loadOnStartup=1)
 @Security(constraints=TechnicalAdministratorSecurityConstraint.ID)
 public class ServletInformation extends JsonResultServlet {
 
