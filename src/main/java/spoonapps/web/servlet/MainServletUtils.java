@@ -3,7 +3,11 @@ package spoonapps.web.servlet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -12,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -730,4 +735,41 @@ public class MainServletUtils {
 			return value;			
 		}
 	}
+
+	public static Map <String,String[]> getHeaders(HttpServletRequest request) {
+		Enumeration<String> headerNames = request.getHeaderNames();
+		
+	    if (headerNames != null) {
+	    	Map <String,String[]> ret=new HashMap<String,String[]>();
+			while (headerNames.hasMoreElements()) {
+				String header=headerNames.nextElement();
+				Enumeration<String> headerValues = request.getHeaders(header);
+				String[] array = (String[])EnumerationUtils.toList(headerValues).toArray();
+				
+				ret.put(header,array);
+			}
+			
+			return ret;
+	    } else {
+			return Collections.emptyMap();
+		}
+	}	
+	
+//	public static String getInformation(HttpServletRequest request) {
+//		
+//		Map<String, String[]> parameterMap = request.getParameterMap();
+//		Map<String, String[]> headers = getHeaders(request);
+//		
+//		request.getAuthType();
+//		request.getCharacterEncoding();
+//		request.getContentLength();
+//		request.getContextPath();
+//		request.getCookies();
+//		
+//		request.getLocalAddr();
+//		request.getLocalName();
+//		request.getLocalPort();
+//		request.getMethod();
+//		
+//	}
 }
