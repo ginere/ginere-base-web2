@@ -30,7 +30,6 @@ echo 1/ mvn Clean
 mvn clean
 test "$?" "mvn Clean";
 
-
 echo 2/ git add --all .
 git add --all .
 test "$?" "git add --all";
