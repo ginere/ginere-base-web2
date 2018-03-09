@@ -735,6 +735,22 @@ public class MainServletUtils {
 			return value;			
 		}
 	}
+	
+	public static String getRequestSessionInfo(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session == null){
+			return "NO_SES:"+getRemoteAddress(request, "NO_REM_ADD")+":"+getUserAgent(request, "NO_USER_AGENT");
+		} else {
+			String value = getSessionStringValue(request, "ID", null);
+			
+			if (value == null){
+				value=session.getId()+getRemoteAddress(request, "NO_REM_ADD")+":"+StringUtils.abbreviate(getUserAgent(request, "NO_USER_AGENT"),15);
+				setSessionStringValue(request, "ID", value);
+			} 
+			
+			return value;			
+		}
+	}
 
 	public static Map <String,String[]> getHeaders(HttpServletRequest request) {
 		Enumeration<String> headerNames = request.getHeaderNames();
