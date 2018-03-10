@@ -14,16 +14,16 @@ import spoonapps.web.servlet.JsonResultServlet;
 import spoonapps.web.servlet.security.Security;
 import spoonapps.web.servlet.security.TechnicalAdministratorSecurityConstraint;
 
-@WebServlet(value="/services/admin/config",description="This returns the values of the global properties",loadOnStartup=1)
+@WebServlet(value="/services/admin/global-properties",description="This returns the values of the global properties, for read only",loadOnStartup=1)
 @Security(constraints=TechnicalAdministratorSecurityConstraint.ID)
-public class ConfigurationInformation extends JsonResultServlet implements GlobalProperties.PropertiesChangedListener{
+public class GetGlobalProperties extends JsonResultServlet implements GlobalProperties.PropertiesChangedListener{
 
 	private static final long serialVersionUID = "$Header$".hashCode();
 
 	protected Map<String, String> properties=null;
 	protected long lastModified=AbstractContextListener.getStartTime();
 	
-	public ConfigurationInformation(){
+	public GetGlobalProperties(){
 		GlobalProperties.addListener(this, true);
 	}
 	

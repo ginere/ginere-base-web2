@@ -14,15 +14,15 @@ import spoonapps.web.servlet.JsonResultServlet;
 import spoonapps.web.servlet.security.Security;
 import spoonapps.web.servlet.security.TechnicalAdministratorSecurityConstraint;
 
-@WebServlet(value="/services/admin/file-properties",description="This returns the values of the global properties file if any",loadOnStartup=1)
+@WebServlet(value="/services/admin/global-properties-editor",description="This returns the values of the global properties file if any",loadOnStartup=1)
 @Security(constraints=TechnicalAdministratorSecurityConstraint.ID)
-public class GetGlobalFileProperties extends JsonResultServlet {
+public class GetGlobalPropertiesEditor extends JsonResultServlet {
 
 	private static final long serialVersionUID = "$Header$".hashCode();
 
 	protected Map<String, String> properties=null;
 	
-	public GetGlobalFileProperties(){	
+	public GetGlobalPropertiesEditor(){	
 	}
 		
 	protected long getLastModifiedException(HttpServletRequest req) throws ServletException, ApplicationException {

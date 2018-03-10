@@ -17,7 +17,7 @@ import spoonapps.web.servlet.MainServletUtils;
 import spoonapps.web.servlet.security.Security;
 import spoonapps.web.servlet.security.TechnicalAdministratorSecurityConstraint;
 
-@WebServlet(value="/services/admin/set-file-properties",description="This sets the value of one property: name, description, value",loadOnStartup=1)
+@WebServlet(value="/services/admin/set-global-properties",description="This sets the value of one property: name, description, value",loadOnStartup=1)
 @Security(constraints=TechnicalAdministratorSecurityConstraint.ID)
 public class SetGlobalFileProperties extends ActionServlet {
 
