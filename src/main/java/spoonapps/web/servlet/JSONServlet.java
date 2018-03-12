@@ -44,12 +44,33 @@ public abstract class JSONServlet extends MainServlet {
 							 HttpServletResponse response) throws ServletException, IOException,ApplicationException {
 		
 		Object obj = doTaskJSONService(request, response);
+
+        writeObject(request,response,obj);
+        
+//		response.setCharacterEncoding(getCharset());
+//		response.setContentType(getContentType());
+//
+//		//		ServletOutputStream output = response.getOutputStream();
+//		PrintWriter writer = response.getWriter();
+//		if (obj!=null){
+//			// If no object to write this writes nothing ...
+//			mapper.writeValue(writer, obj);
+//		}
+//
+//		writer.flush();
+//		writer.close();
+	}
+
+	
+	protected void writeObject(HttpServletRequest request,
+                               HttpServletResponse response,
+                               Object obj) throws ServletException, IOException, ApplicationException {
 		response.setCharacterEncoding(getCharset());
 		response.setContentType(getContentType());
 
-		//		ServletOutputStream output = response.getOutputStream();
+		// ServletOutputStream output = response.getOutputStream();
 		PrintWriter writer = response.getWriter();
-		if (obj!=null){
+		if (obj != null) {
 			// If no object to write this writes nothing ...
 			mapper.writeValue(writer, obj);
 		}
@@ -57,7 +78,7 @@ public abstract class JSONServlet extends MainServlet {
 		writer.flush();
 		writer.close();
 	}
-
+    
 	private String getContentType() {
 		return CONTENT_TYPE_JSON;
 	}
