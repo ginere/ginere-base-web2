@@ -64,7 +64,7 @@ public abstract class JSONServlet extends MainServlet {
 	
 	protected void writeObject(HttpServletRequest request,
                                HttpServletResponse response,
-                               Object obj) throws ServletException, IOException, ApplicationException {
+                               Object obj) throws IOException {
 		response.setCharacterEncoding(getCharset());
 		response.setContentType(getContentType());
 
