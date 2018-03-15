@@ -75,6 +75,8 @@ public class SecurityConstraintManager extends AbstractModule{
 				
 				if (constraint!=null){
 					ret.add(constraint);
+				} else {
+					log.error("Security Constraint not fount:"+id);
 				}
 			}
 			
