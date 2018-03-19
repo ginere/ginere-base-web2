@@ -67,7 +67,7 @@ public abstract class MainServlet extends HttpServlet {
 	protected static final String HEADER_IFMODSINCE = "If-Modified-Since";
 
 	// This stores the servlet information
-	private final ServletInfo servletInfo=new ServletInfo(this);
+	protected final ServletInfo servletInfo=new ServletInfo(this);
 
 	
 	/**
