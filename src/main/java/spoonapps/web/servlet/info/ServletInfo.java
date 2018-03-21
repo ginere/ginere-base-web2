@@ -118,7 +118,7 @@ public class ServletInfo extends TimeInformation{
 										    HttpServletRequest request,
 										    HttpServletResponse response) throws IOException,ApplicationException {
 		
-		SecurityConstraintInterface checkSecurityConstraints = SecurityConstraintManager.MANAGER.checkSecurityConstraints(userId,request,response,securityConstraints);
+		SecurityConstraintInterface checkSecurityConstraints = SecurityConstraintManager.MANAGER.checkSecurityConstraints(this,userId,request,response,securityConstraints);
 		if (checkSecurityConstraints == null){
 			return null;
 		} else {

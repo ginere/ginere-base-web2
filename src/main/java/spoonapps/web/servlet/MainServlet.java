@@ -166,6 +166,9 @@ public abstract class MainServlet extends HttpServlet {
 				}
 			} else {
 				// The security constraint will handle the retour code
+				if (log.isInfoEnabled()){				
+					log.warn("Security Check FAILS for Servlet:"+uri+" in "+(System.currentTimeMillis()-time)+" ms");
+				}
 				return ;
 			}
 		} catch (Throwable e) {

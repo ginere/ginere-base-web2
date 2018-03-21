@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import spoonapps.util.exception.ApplicationException;
 import spoonapps.util.module.AbstractModule;
 import spoonapps.util.runtimechecks.RuntimeCheckResult;
+import spoonapps.web.servlet.info.ServletInfo;
 
 /**
  * This is one security constrain to be implemented
@@ -84,7 +85,8 @@ public class SecurityConstraintManager extends AbstractModule{
 		}
 	}
 
-	public SecurityConstraintInterface checkSecurityConstraints(String userId,
+	public SecurityConstraintInterface checkSecurityConstraints(ServletInfo info,
+										 String userId,
 										 HttpServletRequest request,
 										 HttpServletResponse response,
 										 Set<SecurityConstraintInterface> securityConstraints) throws IOException, ApplicationException {
@@ -92,7 +94,7 @@ public class SecurityConstraintManager extends AbstractModule{
 		for (SecurityConstraintInterface constraint:securityConstraints){
 			try {
 				if (!constraint.check(userId, request,response)){
-					log.warn("Security constaint FAILS:"+constraint+" for user:"+userId);
+					log.warn("Servlet:"+info.name+", Security constaint FAILS:"+constraint+", user:"+userId);
 					return constraint;
 				}
 			}catch (ApplicationException e) {
