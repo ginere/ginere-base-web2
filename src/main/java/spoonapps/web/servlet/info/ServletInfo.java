@@ -52,7 +52,8 @@ public class ServletInfo extends TimeInformation{
 			this.description=description;
 			this.url=StringUtils.join(ws.value());
 			
-			this.name=ws.displayName();
+			this.name=(StringUtils.isBlank(ws.displayName()))?this.url:ws.displayName();
+			
 			
 		} else {
 //			this.url=servlet.getUri();
