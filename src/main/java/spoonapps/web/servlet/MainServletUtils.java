@@ -728,7 +728,7 @@ public class MainServletUtils {
 			String value = getSessionStringValue(request, "ID", null);
 			
 			if (value == null){
-				value=session.getId()+getRemoteAddress(request, "NO_REM_ADD")+":"+StringUtils.abbreviate(getUserAgent(request, "NO_USER_AGENT"),15);
+				value=session.getId()+":"+getRemoteAddress(request, "NO_REM_ADD")+":"+StringUtils.abbreviate(getUserAgent(request, "NO_USER_AGENT"),15);
 				setSessionStringValue(request, "ID", value);
 			} 
 			
