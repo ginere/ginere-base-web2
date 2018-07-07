@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import spoonapps.util.exception.ApplicationException;
 import spoonapps.util.module.AbstractModule;
 import spoonapps.util.runtimechecks.RuntimeCheckResult;
+import spoonapps.web.servlet.MainServletUtils;
 import spoonapps.web.servlet.info.ServletInfo;
 
 /**
@@ -94,7 +95,10 @@ public class SecurityConstraintManager extends AbstractModule{
 		for (SecurityConstraintInterface constraint:securityConstraints){
 			try {
 				if (!constraint.check(userId, request,response)){
-					log.warn("Servlet:"+info.name+", Security constaint FAILS:"+constraint+", user:"+userId);
+					if (log.isWarnEnabled()){
+						log.warn("Servlet:"+info.name+", Security constaint FAILS:"+constraint+", user:"+userId+
+								" info:"+MainServletUtils.getRequestShortInfo(request));
+					}
 					return constraint;
 				}
 			}catch (ApplicationException e) {
